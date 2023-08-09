@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
+import webcamReducer from "./features/webcamSlice";
 import locationReducer from "./features/locationSlice";
-import submittedDataReducer from "./features/submittedDataSlice";
+import formStateReducer from "./features/formStateSlice";
 
 export const store = configureStore({
-  reducer: { submittedDataReducer, locationReducer },
-  devTools: process.env.NODE_ENV !== "production",
+  reducer: { formStateReducer, locationReducer, webcamReducer },
 });
 
 export type RootState = ReturnType<typeof store.getState>;
