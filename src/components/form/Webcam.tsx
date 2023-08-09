@@ -1,46 +1,59 @@
-import React from "react";
-import Webcam from "react-webcam";
+import React, { useState } from "react";
 
-const videoConstraints = {
-  width: 1280,
-  height: 720,
-  facingMode: "user",
-};
+const CameraComponent = () => {
+  const [stream, setStream] = useState(null);
+  const [imageBlob, setImageBlob] = useState(null);
+  const videoRef = React.createRef();
+  const canvasRef = React.createRef();
 
-const WebcamCapture = () => {
-  const [deviceId, setDeviceId] = React.useState({});
-  const [devices, setDevices] = React.useState([]);
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
+      setStream(mediaStream);
+      videoRef.current.srcObject = mediaStream;
+    } catch (error) {
+      console.error("Error accessing camera:", error);
+    }
+  };
 
-  const handleDevices = React.useCallback(
-    (mediaDevices) =>
-      setDevices(mediaDevices.filter(({ kind }) => kind === "videoinput")),
-    [setDevices]
-  );
+  const takePhoto = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
-  React.useEffect(() => {
-    navigator.mediaDevices.enumerateDevices().then(handleDevices);
-  }, [handleDevices]);
-  const [imageSrc, setImageSrc] = React.useState();
+    const context = canvas.getContext("2d");
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-  const webcamRef = React.useRef(null);
-  const capture = React.useCallback(() => {
-    setImageSrc(webcamRef.current.getScreenshot());
-  }, [webcamRef]);
+    canvas.toBlob((blob) => {
+      setImageBlob(blob);
+    });
+  };
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
+    }
+  };
+
   return (
-    <>
-      <Webcam
-        className=""
-        height={720}
-        ref={webcamRef}
-        width={1280}
-        onUserMediaError={() => console.log("No camera")}
-        videoConstraints={videoConstraints}
-      />
-      <button onClick={capture}>Capture photo</button>
-      <div>
-        <img src={imageSrc} />
-      </div>
-    </>
+    <div>
+      <button onClick={startCamera}>Start Camera</button>
+      <button onClick={takePhoto}>Take Photo</button>
+      <button onClick={stopCamera}>Stop Camera</button>
+      {imageBlob && (
+        <div>
+          <h2>Preview</h2>
+          <img src={URL.createObjectURL(imageBlob)} alt="Captured" />
+        </div>
+      )}
+      <video ref={videoRef} autoPlay playsInline />
+      <canvas ref={canvasRef} style={{ display: "none" }} />
+    </div>
   );
 };
-export default WebcamCapture;
+
+export default CameraComponent;
