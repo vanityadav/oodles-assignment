@@ -3,7 +3,6 @@ import React from "react";
 
 export default function Location() {
   const geoApi = useGeoLocationApi();
-  console.log(geoApi);
 
   if (geoApi.location)
     return (
