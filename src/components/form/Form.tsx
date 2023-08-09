@@ -28,13 +28,14 @@ export default function Form() {
       formData.append("photo", image);
 
       // send the form data to backend
-      const res = await fetch(process.env.NEXT_PUBLIC_API_POST_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        body: formData,
-      });
+
+      // const res = await fetch(process.env.NEXT_PUBLIC_API_POST_URL, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      //   body: formData,
+      // });
 
       dispatch(
         registerUser({
@@ -44,24 +45,26 @@ export default function Form() {
           photo: image,
         })
       );
-      // success
-      if (res.ok) {
-        setFormState({
-          status: "SUCCESS",
-          message: "User information saved successfully",
-        });
-        console.log(res);
-        // update redux store
-      }
+      // // success
 
-      // set server error
-      else {
-        setFormState({
-          status: "ERROR",
-          type: "Server Error",
-          message: "User information is not saved",
-        });
-      }
+      // if (res.ok) {
+      //   setFormState({
+      //     status: "SUCCESS",
+      //     message: "User information saved successfully",
+      //   });
+      //   console.log(res);
+      //   // update redux store
+      // }
+
+      // // set server error
+
+      // else {
+      //   setFormState({
+      //     status: "ERROR",
+      //     type: "Server Error",
+      //     message: "User information is not saved",
+      //   });
+      // }
     }
   }
 

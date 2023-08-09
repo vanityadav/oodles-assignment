@@ -15,7 +15,11 @@ type InitialState = {
   userData: FormData[];
 };
 
-const initialState = { status: null } as InitialState;
+const initialState = {
+  status: null,
+  statusText: " ",
+  userData: [],
+} as InitialState;
 
 export const formState = createSlice({
   name: "formState",
