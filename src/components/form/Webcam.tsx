@@ -23,7 +23,6 @@ export default function Webcam() {
 
   const openCamera = async () => {
     // check if there are any video devices available
-    setCamera(true);
 
     try {
       const saveDeviceID = (devices: MediaDeviceInfo[]) => {
@@ -44,7 +43,7 @@ export default function Webcam() {
 
       // check is video stream is available
       if (!stream) {
-        // setCamera(true);
+        setCamera(true);
         setStream(mediaStream);
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;

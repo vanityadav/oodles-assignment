@@ -41,14 +41,14 @@ export default function FormSubmitButton() {
       formData.append("photo", image);
 
       // send the form data to backend
-      // const res = await fetch(process.env.NEXT_PUBLIC_API_POST_URL, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      //   body: formData,
-      // });
-      const res = { ok: true };
+      const res = await fetch(process.env.NEXT_PUBLIC_API_POST_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
+      });
+
       // on success update redux store
       if (res.ok) {
         dispatch(
