@@ -24,7 +24,7 @@ type InitialState = {
 
 const initialState = {
   status: null,
-  statusText: " ",
+  statusText: "",
   userData: [],
 } as InitialState;
 
