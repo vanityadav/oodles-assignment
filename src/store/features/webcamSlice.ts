@@ -4,14 +4,12 @@ type InitialState = {
   deviceId: null | string;
   image: Blob | null;
   supported: boolean;
-  cameraAccess: boolean;
 };
 
 const initialState = {
   deviceId: null,
   supported: true,
   image: null,
-  cameraAccess: true,
 } as InitialState;
 
 export const webcam = createSlice({
@@ -21,18 +19,10 @@ export const webcam = createSlice({
     setDeviceId: (state, action: PayloadAction<string>) => {
       state.deviceId = action.payload;
     },
-    notAllowed: (state) => {
-      return {
-        deviceId: null,
-        cameraAccess: false,
-        supported: true,
-        image: null,
-      };
-    },
+
     notDevicesFound: (state) => {
       return {
         deviceId: null,
-        cameraAccess: false,
         supported: false,
         image: null,
       };
@@ -46,11 +36,6 @@ export const webcam = createSlice({
   },
 });
 
-export const {
-  saveImage,
-  deleteImage,
-  notDevicesFound,
-  setDeviceId,
-  notAllowed,
-} = webcam.actions;
+export const { saveImage, deleteImage, notDevicesFound, setDeviceId } =
+  webcam.actions;
 export default webcam.reducer;

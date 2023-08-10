@@ -1,6 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
-  notAllowed,
   notDevicesFound,
   saveImage,
   setDeviceId,
@@ -19,9 +18,6 @@ export default function Webcam() {
   const imageBlob = useAppSelector((state) => state.webcamReducer.image);
   const deviceId = useAppSelector((state) => state.webcamReducer.deviceId);
   const cameraDevice = useAppSelector((state) => state.webcamReducer.supported);
-  const cameraAccess = useAppSelector(
-    (state) => state.webcamReducer.cameraAccess
-  );
 
   const openCamera = async () => {
     // check if there are any video devices available
@@ -29,12 +25,7 @@ export default function Webcam() {
       const saveDeviceID = (devices: MediaDeviceInfo[]) => {
         devices.forEach((device) => {
           if (device.kind === "videoinput") {
-            console.log("Device ID:", device.deviceId);
-            console.log("Device Label:", device.label);
             dispatch(setDeviceId(device.deviceId));
-          } else {
-            // camera access blocked
-            dispatch(notAllowed());
           }
         });
       };
@@ -108,15 +99,7 @@ export default function Webcam() {
       )}
       <video ref={videoRef} playsInline muted />
       <canvas ref={canvasRef} className="hidden" />
-      {cameraDevice ? (
-        cameraAccess ? (
-          <p>Device id -{deviceId}</p>
-        ) : (
-          <p>Enable Camera Access</p>
-        )
-      ) : (
-        <p>No devices Found</p>
-      )}
+      {cameraDevice ? <p>Device id -{deviceId}</p> : <p>No devices Found</p>}
     </div>
   );
 }
