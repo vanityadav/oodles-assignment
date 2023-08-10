@@ -34,12 +34,8 @@ export const location = createSlice({
     notSupported: () => {
       return { location: null, locationAccess: false, supported: false };
     },
-    resetLocation: (state) => {
-      state.location = null;
-    },
   },
 });
 
-export const { setLocation, notAllowed, notSupported, resetLocation } =
-  location.actions;
+export const { setLocation, notAllowed, notSupported } = location.actions;
 export default location.reducer;
