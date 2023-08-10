@@ -3,12 +3,14 @@ import {
   deviceIdError,
   imageError,
   locationError,
+  reset,
   sending,
   serverError,
   success,
 } from "@/store/features/formStateSlice";
 import PrimaryButton from "../button/PrimaryButton";
 import ButtonLoader from "../button/ButtonLoader";
+import { deleteImage } from "@/store/features/webcamSlice";
 
 export default function FormSubmitButton() {
   const dispatch = useAppDispatch();
@@ -59,6 +61,12 @@ export default function FormSubmitButton() {
             photo: image,
           })
         );
+        setTimeout(() => {
+          dispatch(deleteImage());
+        }, 100);
+        setTimeout(() => {
+          dispatch(reset());
+        }, 3000);
       }
 
       //on error set server error
@@ -68,12 +76,18 @@ export default function FormSubmitButton() {
     }
   };
 
-  const enabled = image && image && deviceId;
+  let enabled = !!(image && location && deviceId);
 
   let text = "Save";
   if (status === "SENT") text = "Success";
-  if (status === "PENDING") text = "Saving...";
-  if (status === "SERVER ERROR") text = "Yikes!, Retry";
+  if (status === "PENDING") {
+    text = "Saving...";
+    enabled = false;
+  }
+  if (status === "SERVER ERROR") {
+    text = "Yikes!, Retry";
+    enabled = true;
+  }
 
   return (
     <PrimaryButton onClick={handleSubmit} disabled={!enabled}>

@@ -24,7 +24,7 @@ type InitialState = {
 
 const initialState = {
   status: null,
-  statusText: " ",
+  statusText: "",
   userData: [],
 } as InitialState;
 
@@ -32,6 +32,10 @@ export const formState = createSlice({
   name: "formState",
   initialState,
   reducers: {
+    reset: (state) => {
+      state.status = null;
+      state.statusText = "";
+    },
     sending: (state) => {
       state.status = "PENDING";
     },
@@ -72,5 +76,6 @@ export const {
   serverError,
   locationError,
   deviceIdError,
+  reset,
 } = formState.actions;
 export default formState.reducer;

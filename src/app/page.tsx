@@ -1,5 +1,6 @@
 import { Form } from "@/components/form";
 import { UserList } from "@/components/user-list";
+import Notifications from "@/components/toast/Notifications";
 
 // get submitted logs
 
@@ -16,6 +17,7 @@ export default function Home() {
     <main className="flex flex-col gap-10 sm:w-1/2 m-auto max-w-3xl w-[90%]">
       <Form />
       <UserList />
+      <Notifications />
     </main>
   );
 }
