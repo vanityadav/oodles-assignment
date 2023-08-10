@@ -1,26 +1,28 @@
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
+  deleteImage,
   notDevicesFound,
   saveImage,
   setDeviceId,
 } from "@/store/features/webcamSlice";
-import Image from "next/image";
 import React, { useState, useRef } from "react";
 import PrimaryButton from "../button/PrimaryButton";
 
 export default function Webcam() {
   const [stream, setStream] = useState<MediaStream | null>(null);
 
+  const [camera, setCamera] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const dispatch = useAppDispatch();
   const imageBlob = useAppSelector((state) => state.webcamReducer.image);
-  const deviceId = useAppSelector((state) => state.webcamReducer.deviceId);
-  const cameraDevice = useAppSelector((state) => state.webcamReducer.supported);
+  // const deviceId = useAppSelector((state) => state.webcamReducer.deviceId);
+  // const cameraDevice = useAppSelector((state) => state.webcamReducer.supported);
 
   const openCamera = async () => {
     // check if there are any video devices available
+
     try {
       const saveDeviceID = (devices: MediaDeviceInfo[]) => {
         devices.forEach((device) => {
@@ -40,6 +42,7 @@ export default function Webcam() {
 
       // check is video stream is available
       if (!stream) {
+        setCamera(true);
         setStream(mediaStream);
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
@@ -80,6 +83,7 @@ export default function Webcam() {
     // close the video stream and device camera
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
+      setCamera(false);
       setStream(null);
     }
   };
@@ -88,23 +92,52 @@ export default function Webcam() {
     <div className="flex">
       <div className="flex flex-col gap-2">
         <PrimaryButton onClick={openCamera}>Open Camera</PrimaryButton>
-        <PrimaryButton onClick={takePhoto}>Take Photo</PrimaryButton>
-        <PrimaryButton onClick={closeCamera}>Close Camera</PrimaryButton>
       </div>
-      {imageBlob && (
-        <div>
-          <h2>Preview</h2>
-          <Image
-            height={250}
-            width={250}
-            src={URL.createObjectURL(imageBlob)}
-            alt="Captured"
-          />
+      <div
+        className={`fixed inset-0 flex items-center z-30 ${
+          camera ? "flex" : "hidden"
+        }`}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) closeCamera();
+        }}
+      >
+        <div className="flex flex-col bg-white p-4 gap-2 m-auto rounded-lg sm:w-1/2 w-[90%] ">
+          <div className="flex items-center gap-2 justify-between">
+            {imageBlob ? (
+              <div className="flex items-center gap-2">
+                <PrimaryButton onClick={closeCamera}>Save</PrimaryButton>
+                <PrimaryButton onClick={() => dispatch(deleteImage())}>
+                  Retake
+                </PrimaryButton>
+              </div>
+            ) : (
+              <PrimaryButton onClick={takePhoto}>Capture</PrimaryButton>
+            )}
+            <PrimaryButton onClick={closeCamera}>Close</PrimaryButton>
+          </div>
+          <div className="relative w-full">
+            {imageBlob && (
+              <>
+                <h2>Image Preview</h2>
+                <img
+                  src={URL.createObjectURL(imageBlob)}
+                  alt="Captured"
+                  className="absolute inset-0 z-50 "
+                />
+              </>
+            )}
+
+            <video
+              ref={videoRef}
+              playsInline
+              muted
+              className="hover:cursor-copy absolute inset-0"
+              onClick={takePhoto}
+            />
+            <canvas ref={canvasRef} className="hidden" />
+          </div>
         </div>
-      )}
-      <video ref={videoRef} playsInline muted />
-      <canvas ref={canvasRef} className="hidden" />
-      {cameraDevice ? <p>Device id -{deviceId}</p> : <p>No devices Found</p>}
+      </div>
     </div>
   );
 }

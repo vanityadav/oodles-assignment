@@ -13,7 +13,7 @@ import { UserList } from "@/components/user-list";
 
 export default function Home() {
   return (
-    <main className="flex  flex-col gap-10 sm:w-1/2 sm:m-auto max-w-3xl">
+    <main className="flex flex-col gap-10 sm:w-1/2 m-auto max-w-3xl w-[90%]">
       <Form />
       <UserList />
     </main>
