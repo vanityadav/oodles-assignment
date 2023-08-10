@@ -8,8 +8,8 @@ import {
 import React, { useState, useRef } from "react";
 import PrimaryButton from "../button/PrimaryButton";
 
-import img from "/public/assests/img.jpg";
-import Image from "next/image";
+// import img from "/public/assests/img.jpg";
+// import Image from "next/image";
 
 export default function Webcam() {
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -120,9 +120,8 @@ export default function Webcam() {
             {imageBlob && (
               <div className="flex flex-col absolute inset-0 z-50 overflow-hidden">
                 <p>Image Preview</p>
-                <Image
-                  src={img}
-                  // src={URL.createObjectURL(imageBlob)}
+                <img
+                  src={URL.createObjectURL(imageBlob)}
                   alt="Captured"
                   className="object-contain h-full w-full"
                 />
