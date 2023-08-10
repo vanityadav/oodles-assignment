@@ -1,8 +1,15 @@
 import { useAppDispatch, useAppSelector } from "@/store";
-import { cameraError, saveImage } from "@/store/features/webcamSlice";
+import {
+  notAllowed,
+  notDevicesFound,
+  saveImage,
+  setDeviceId,
+} from "@/store/features/webcamSlice";
+import Image from "next/image";
 import React, { useState, useRef } from "react";
+import PrimaryButton from "../button/PrimaryButton";
 
-export default function CameraComponent() {
+export default function Webcam() {
   const [stream, setStream] = useState<MediaStream | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -10,13 +17,37 @@ export default function CameraComponent() {
 
   const dispatch = useAppDispatch();
   const imageBlob = useAppSelector((state) => state.webcamReducer.image);
+  const deviceId = useAppSelector((state) => state.webcamReducer.deviceId);
+  const cameraDevice = useAppSelector((state) => state.webcamReducer.supported);
+  const cameraAccess = useAppSelector(
+    (state) => state.webcamReducer.cameraAccess
+  );
 
   const openCamera = async () => {
+    // check if there are any video devices available
     try {
+      const saveDeviceID = (devices: MediaDeviceInfo[]) => {
+        devices.forEach((device) => {
+          if (device.kind === "videoinput") {
+            console.log("Device ID:", device.deviceId);
+            console.log("Device Label:", device.label);
+            dispatch(setDeviceId(device.deviceId));
+          } else {
+            // camera access blocked
+            dispatch(notAllowed());
+          }
+        });
+      };
+
+      // get device id and save it to slice
+      navigator.mediaDevices.enumerateDevices().then(saveDeviceID);
+
+      // turn on video stream
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: true,
       });
 
+      // check is video stream is available
       if (!stream) {
         setStream(mediaStream);
         if (videoRef.current) {
@@ -25,9 +56,8 @@ export default function CameraComponent() {
         }
       }
     } catch (error) {
-      console.error("Error accessing camera:", error);
-      dispatch(cameraError());
-      alert("Error accessing camera. Please check your camera permissions.");
+      // device not found or access denied
+      dispatch(notDevicesFound());
     }
   };
 
@@ -39,17 +69,24 @@ export default function CameraComponent() {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
 
+    // show the captured image
     const context = canvas.getContext("2d");
     context?.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    canvas.toBlob((blob) => {
-      if (blob) {
-        dispatch(saveImage(blob));
-      }
-    });
+    // convert the steam to blob and in webp format
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          dispatch(saveImage(blob));
+        }
+      },
+      "image/webp",
+      0.8
+    );
   };
 
   const closeCamera = () => {
+    // close the video stream and device camera
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
       setStream(null);
@@ -57,18 +94,29 @@ export default function CameraComponent() {
   };
 
   return (
-    <div>
-      <button onClick={openCamera}>Open Camera</button>
-      <button onClick={takePhoto}>Take Photo</button>
-      <button onClick={closeCamera}>Close Camera</button>
+    <div className="flex">
+      <div className="flex flex-col gap-2">
+        <PrimaryButton onClick={openCamera}>Open Camera</PrimaryButton>
+        <PrimaryButton onClick={takePhoto}>Take Photo</PrimaryButton>
+        <PrimaryButton onClick={closeCamera}>Close Camera</PrimaryButton>
+      </div>
       {imageBlob && (
         <div>
           <h2>Preview</h2>
-          <img src={URL.createObjectURL(imageBlob)} alt="Captured" />
+          <Image src={URL.createObjectURL(imageBlob)} alt="Captured" />
         </div>
       )}
       <video ref={videoRef} playsInline muted />
       <canvas ref={canvasRef} className="hidden" />
+      {cameraDevice ? (
+        cameraAccess ? (
+          <p>Device id -{deviceId}</p>
+        ) : (
+          <p>Enable Camera Access</p>
+        )
+      ) : (
+        <p>No devices Found</p>
+      )}
     </div>
   );
 }

@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
   setLocation,
-  notAllowed,
   notSupported,
+  notAllowed,
 } from "@/store/features/locationSlice";
 
 export default function useGeoLocationApi() {
@@ -11,21 +11,23 @@ export default function useGeoLocationApi() {
   const position = useAppSelector((state) => state.locationReducer);
 
   useEffect(() => {
-    function handlePosition(position: GeolocationPosition) {
-      if (position) {
-        dispatch(
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          })
-        );
-      } else {
-        dispatch(notAllowed());
-      }
-    }
-    if (navigator.geolocation)
-      navigator.geolocation.getCurrentPosition(handlePosition);
-    else {
+    const handlePosition = (position: GeolocationPosition) => {
+      // save location to slice
+      dispatch(
+        setLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        })
+      );
+    };
+
+    //get the current location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(handlePosition, () =>
+        dispatch(notAllowed())
+      );
+    } else {
+      //  if geolocation is not supported show error
       dispatch(notSupported());
     }
   }, [dispatch]);

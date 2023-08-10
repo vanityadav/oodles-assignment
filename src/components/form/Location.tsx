@@ -11,7 +11,7 @@ export default function Location() {
         <p>Longitude- {geoApi.location.longitude}</p>
       </div>
     );
-  if (!geoApi.supported) return <div>Not Supported</div>;
-  if (!geoApi.locationAccess) return <div>Enable Location</div>;
+  if (!geoApi.supported) return <div>GPS not supported</div>;
+  if (!geoApi.locationAccess) return <div>Enable Location Services</div>;
   return <div>Fetching Location</div>;
 }

@@ -1,13 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type FormData = {
+export type FormData = {
   deviceid: string;
   photo: Blob;
   lat: string;
   log: string;
 };
 
-type FormStatus = null | "INVALID" | "PENDING" | "SENT" | "SERVER ERROR";
+type FormStatus =
+  | null
+  | "LOCATION ERROR"
+  | "CAMERA ERROR"
+  | "DEVICE ID ERROR"
+  | "PENDING"
+  | "SENT"
+  | "SERVER ERROR";
 
 type InitialState = {
   status: FormStatus;
@@ -25,16 +32,45 @@ export const formState = createSlice({
   name: "formState",
   initialState,
   reducers: {
-    send: () => initialState,
-    sending: (state, action: PayloadAction<FormData>) => {},
+    sending: (state) => {
+      state.status = "PENDING";
+    },
     clearData: (state) => {
       state.userData = [];
     },
-    registerUser: (state, action: PayloadAction<FormData>) => {
-      state.userData = [...state.userData, action.payload];
+    serverError: (state) => {
+      state.status = "SERVER ERROR";
+      state.statusText = "User information is not saved";
+    },
+    deviceIdError: (state) => {
+      state.status = "DEVICE ID ERROR";
+      state.statusText = "There was an error accessing your device id";
+    },
+    imageError: (state) => {
+      state.status = "CAMERA ERROR";
+      state.statusText = "Photo is required";
+    },
+    locationError: (state) => {
+      state.status = "LOCATION ERROR";
+      state.statusText = "Allow location access to this site";
+    },
+    success: (state, action: PayloadAction<FormData>) => {
+      return {
+        userData: [...state.userData, action.payload],
+        status: "SENT",
+        statusText: "User information saved successfully",
+      };
     },
   },
 });
 
-export const { registerUser } = formState.actions;
+export const {
+  success,
+  sending,
+  clearData,
+  imageError,
+  serverError,
+  locationError,
+  deviceIdError,
+} = formState.actions;
 export default formState.reducer;
