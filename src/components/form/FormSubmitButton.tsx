@@ -3,12 +3,15 @@ import {
   deviceIdError,
   imageError,
   locationError,
+  reset,
   sending,
   serverError,
   success,
 } from "@/store/features/formStateSlice";
 import PrimaryButton from "../button/PrimaryButton";
 import ButtonLoader from "../button/ButtonLoader";
+import { deleteImage } from "@/store/features/webcamSlice";
+import { resetLocation } from "@/store/features/locationSlice";
 
 export default function FormSubmitButton() {
   const dispatch = useAppDispatch();
@@ -59,6 +62,11 @@ export default function FormSubmitButton() {
             photo: image,
           })
         );
+        setTimeout(() => {
+          dispatch(reset());
+          dispatch(deleteImage());
+          dispatch(resetLocation());
+        }, 500);
       }
 
       //on error set server error

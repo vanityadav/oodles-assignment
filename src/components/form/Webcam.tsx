@@ -118,7 +118,7 @@ export default function Webcam() {
           </div>
           <div className="relative ">
             {imageBlob && (
-              <div className="flex flex-col absolute inset-0 z-50 overflow-hidden">
+              <div className="flex flex-col absolute inset-0 z-50 overflow-hidden bg-white">
                 <p>Image Preview</p>
                 <img
                   src={URL.createObjectURL(imageBlob)}
