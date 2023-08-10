@@ -1,7 +1,7 @@
 export function DeviceIcon() {
   return (
     <svg
-      width="28"
+      width="18"
       height="28"
       viewBox="0 0 28 28"
       fill="none"

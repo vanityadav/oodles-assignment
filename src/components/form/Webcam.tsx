@@ -8,6 +8,9 @@ import {
 import React, { useState, useRef } from "react";
 import PrimaryButton from "../button/PrimaryButton";
 
+import img from "/public/assests/img.jpg";
+import Image from "next/image";
+
 export default function Webcam() {
   const [stream, setStream] = useState<MediaStream | null>(null);
 
@@ -17,11 +20,10 @@ export default function Webcam() {
 
   const dispatch = useAppDispatch();
   const imageBlob = useAppSelector((state) => state.webcamReducer.image);
-  // const deviceId = useAppSelector((state) => state.webcamReducer.deviceId);
-  // const cameraDevice = useAppSelector((state) => state.webcamReducer.supported);
 
   const openCamera = async () => {
     // check if there are any video devices available
+    setCamera(true);
 
     try {
       const saveDeviceID = (devices: MediaDeviceInfo[]) => {
@@ -42,7 +44,7 @@ export default function Webcam() {
 
       // check is video stream is available
       if (!stream) {
-        setCamera(true);
+        // setCamera(true);
         setStream(mediaStream);
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
@@ -101,7 +103,7 @@ export default function Webcam() {
           if (e.target === e.currentTarget) closeCamera();
         }}
       >
-        <div className="flex flex-col bg-white p-4 gap-2 m-auto rounded-lg sm:w-1/2 w-[90%] ">
+        <div className="flex flex-col bg-white p-4 gap-6 m-auto rounded-lg sm:w-1/2 w-[90%] ">
           <div className="flex items-center gap-2 justify-between">
             {imageBlob ? (
               <div className="flex items-center gap-2">
@@ -115,23 +117,24 @@ export default function Webcam() {
             )}
             <PrimaryButton onClick={closeCamera}>Close</PrimaryButton>
           </div>
-          <div className="relative w-full">
+          <div className="relative ">
             {imageBlob && (
-              <>
-                <h2>Image Preview</h2>
-                <img
-                  src={URL.createObjectURL(imageBlob)}
+              <div className="flex flex-col absolute inset-0 z-50 overflow-hidden">
+                <p>Image Preview</p>
+                <Image
+                  src={img}
+                  // src={URL.createObjectURL(imageBlob)}
                   alt="Captured"
-                  className="absolute inset-0 z-50 "
+                  className="object-contain h-full w-full"
                 />
-              </>
+              </div>
             )}
 
             <video
               ref={videoRef}
               playsInline
               muted
-              className="hover:cursor-copy absolute inset-0"
+              className="hover:cursor-copy h-full w-full"
               onClick={takePhoto}
             />
             <canvas ref={canvasRef} className="hidden" />

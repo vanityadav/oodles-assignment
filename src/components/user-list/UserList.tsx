@@ -32,7 +32,9 @@ export default function UserList({ data }: Props) {
               className=" aspect-auto1/1 h-16 w-16 object-contain rounded-full"
             />
             <div className="flex flex-col gap-1">
-              <p className="flex gap-2 items-center">{ele.deviceid}</p>
+              <p className="flex gap-2 items-center  break-all ">
+                {ele.deviceid}
+              </p>
 
               <div className="flex gap-2 items-center text-gray-400 text-sm">
                 <LocationIcon />

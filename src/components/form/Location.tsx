@@ -1,3 +1,4 @@
+import { LocationIcon } from "@/icons/Icons";
 import { useGeoLocationApi } from "@/utils";
 import React from "react";
 
@@ -6,12 +7,14 @@ export default function Location() {
 
   if (geoApi.location)
     return (
-      <div>
-        <p>Latitude- {geoApi.location.latitude}</p>
-        <p>Longitude- {geoApi.location.longitude}</p>
+      <div className="flex gap-2 items-center text-gray-400 text-sm">
+        <LocationIcon />
+        {geoApi.location.latitude}, {geoApi.location.longitude}
       </div>
     );
-  if (!geoApi.supported) return <div>GPS not supported</div>;
-  if (!geoApi.locationAccess) return <div>Enable Location Services</div>;
-  return <div>Fetching Location</div>;
+  if (!geoApi.supported)
+    return <p className="text-red-500 ">GPS not supported</p>;
+  if (!geoApi.locationAccess)
+    return <p className="text-red-500 ">Enable Location Services</p>;
+  return <p>Fetching Location....</p>;
 }
