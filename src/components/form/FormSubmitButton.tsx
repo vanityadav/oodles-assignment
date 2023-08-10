@@ -62,9 +62,11 @@ export default function FormSubmitButton() {
           })
         );
         setTimeout(() => {
-          dispatch(reset());
           dispatch(deleteImage());
-        }, 500);
+        }, 100);
+        setTimeout(() => {
+          dispatch(reset());
+        }, 3000);
       }
 
       //on error set server error
