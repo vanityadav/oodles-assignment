@@ -95,7 +95,7 @@ export default function Webcam() {
         <PrimaryButton onClick={openCamera}>Open Camera</PrimaryButton>
       </div>
       <div
-        className={`fixed inset-0 flex items-center z-30 ${
+        className={`fixed inset-0 flex items-center z-30 bg-white/10 backdrop-blur-sm ${
           camera ? "flex" : "hidden"
         }`}
         onClick={(e) => {
