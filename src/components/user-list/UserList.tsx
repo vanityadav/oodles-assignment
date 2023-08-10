@@ -25,6 +25,8 @@ export default function UserList({ data }: Props) {
             <Image
               // converting blob to base64 to display the image
               // also expecting the img url if fetched
+              height={64}
+              width={64}
               src={URL.createObjectURL(ele.photo)}
               alt="user iMage"
               className=" aspect-auto1/1 h-16 w-16 object-contain rounded-full"

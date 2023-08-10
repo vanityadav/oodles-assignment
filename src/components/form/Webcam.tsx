@@ -94,7 +94,12 @@ export default function Webcam() {
       {imageBlob && (
         <div>
           <h2>Preview</h2>
-          <Image src={URL.createObjectURL(imageBlob)} alt="Captured" />
+          <Image
+            height={250}
+            width={250}
+            src={URL.createObjectURL(imageBlob)}
+            alt="Captured"
+          />
         </div>
       )}
       <video ref={videoRef} playsInline muted />
